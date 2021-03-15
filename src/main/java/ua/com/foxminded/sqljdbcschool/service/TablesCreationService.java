@@ -10,6 +10,8 @@ import ua.com.foxminded.sqljdbcschool.config.ConnectionConfig;
 
 public class TablesCreationService {
 
+    private static final String STATEMENT_DELIMITER = ";";
+
     private String url;
     private String login;
     private String pass;
@@ -26,7 +28,7 @@ public class TablesCreationService {
                 String sql = "";
                 for (String line: lines) {
                     sql += line;
-                    if (line.contains(";")) {
+                    if (line.contains(STATEMENT_DELIMITER)) {
                         statement.execute(sql);
                         sql = "";
                     }
