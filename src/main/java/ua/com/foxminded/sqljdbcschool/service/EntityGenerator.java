@@ -4,9 +4,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public interface EntityGenerator {
+public class EntityGenerator {
 
-    static <T> Set<T> generate(Supplier<T> create, int amount) {
+    private EntityGenerator() {
+
+    }
+
+    public static <T> Set<T> generate(Supplier<T> create, int amount) {
         Set<T> entities = new HashSet<>();
         while (entities.size() < amount) {
             entities.add(create.get());

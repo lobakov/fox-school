@@ -1,29 +1,22 @@
 package ua.com.foxminded.sqljdbcschool.service;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-
-import ua.com.foxminded.sqljdbcschool.config.ConnectionConfig;
 
 public class TablesCreationService {
 
     private static final String STATEMENT_DELIMITER = ";";
 
-    private String url;
-    private String login;
-    private String pass;
+    private ConnectionService connectionService;
 
-    public TablesCreationService(ConnectionConfig config) {
-        this.url = config.getDbUrl();
-        this.login = config.getLogin();
-        this.pass = config.getPassword();
+    public TablesCreationService(ConnectionService connectionService) {
+        this.connectionService = connectionService;
     }
 
     public void createTablesFromFile(List<String> lines) {
-        try (Connection connection = DriverManager.getConnection(url, login, pass);
+        try (Connection connection = connectionService.getConnection();
              Statement statement = connection.createStatement()){
                 String sql = "";
                 for (String line: lines) {

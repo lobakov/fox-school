@@ -1,13 +1,9 @@
 package ua.com.foxminded.sqljdbcschool.entity;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class Group {
 
     private Long id;
     private String name;
-    private Set<Student> students;
 
     public Group() {
 
@@ -15,11 +11,14 @@ public class Group {
 
     public Group(String name) {
         this.name = name;
-        this.students = new HashSet<>();
     }
 
     public Long getId() {
         return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setName(String name) {
@@ -30,25 +29,11 @@ public class Group {
         return this.name;
     }
 
-    public boolean addStudent(Student student) {
-        return this.students.add(student);
-    }
-
-    public boolean removeStudent(Student student) {
-        return this.students.remove(student);
-    }
-
-    public void setStudent(Set<Student> students) {
-        this.students = students;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        int result = prime + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((students == null) ? 0 : students.hashCode());
         return result;
     }
 
@@ -60,17 +45,12 @@ public class Group {
             return false;
         }
         Group other = (Group) obj;
-        return //(id == other.id) &&
+        return (id == other.id) &&
                (name.equals(other.name));
-        //&&       (students.equals(other.students));
-    }
-
-    public Set<Student> getStudents() {
-        return this.students;
     }
 
     @Override
     public String toString() {
-        return "Group: " + name;
+        return id + ". " + name;
     }
 }
