@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import ua.com.foxminded.sqljdbcschool.entity.Course;
 import ua.com.foxminded.sqljdbcschool.service.ConnectionService;
@@ -13,6 +15,53 @@ public class CourseRepository extends JdbcSchoolRepository<Course> {
 
     public CourseRepository(ConnectionService connectionService) {
         super(connectionService);
+    }
+
+    public List<Course> findAllCoursesByStudentId(Long studentId) {
+        List<Course> result = new ArrayList<>();
+        String request = "SELECT courses.id, courses.name, courses.description FROM"
+                + "(SELECT course_id FROM students_courses WHERE student_id = ?)"
+                + "LEFT JOIN courses ON course_id = id";
+        try (Connection connection = connectionService.getConnection();
+                        PreparedStatement statement = connection.prepareStatement(request)) {
+            statement.setLong(1, studentId);
+            try (ResultSet resultSet = statement.executeQuery(request)) {
+                while(resultSet.next()){
+                    Long id  = resultSet.getLong("id");
+                    String name = resultSet.getString("name");
+                    String description = resultSet.getString("description");
+                    Course course = new Course(name, description);
+                    course.setId(id);
+                    result.add(course);
+                }
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+            }
+        } catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        return result;
+    }
+
+    public List<Course> findAll() {
+        List<Course> result = new ArrayList<>();
+        String sqlStatement = "SELECT * FROM courses";
+
+        try (Connection connection = connectionService.getConnection();
+                    Statement statement = connection.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sqlStatement)) {
+            while(resultSet.next()){
+                Long id  = resultSet.getLong("id");
+                String name = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                Course course = new Course(name, description);
+                course.setId(id);
+                result.add(course);
+            }
+        } catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        return result;
     }
 
     @Override

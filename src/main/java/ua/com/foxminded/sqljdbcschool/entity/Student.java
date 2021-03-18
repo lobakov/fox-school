@@ -97,21 +97,13 @@ public class Student {
         if (getClass() != obj.getClass())
             return false;
         Student other = (Student) obj;
-        if (firstName == null) {
-            if (other.firstName != null)
-                return false;
-        } else if (!firstName.equals(other.firstName))
-            return false;
-        if (lastName == null) {
-            if (other.lastName != null)
-                return false;
-        } else if (!lastName.equals(other.lastName))
-            return false;
-        return true;
+        return (id == other.id) &&
+               (firstName.equals(other.firstName)) &&
+               (lastName.equals(other.lastName));
     }
 
     @Override
     public String toString() {
-        return firstName + " " + lastName;
+        return id + ". " + firstName + " " + lastName + "  group: " + group.getName();
     }
 }

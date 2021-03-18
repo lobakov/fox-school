@@ -1,7 +1,10 @@
 package ua.com.foxminded.sqljdbcschool.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import ua.com.foxminded.sqljdbcschool.entity.Course;
-import ua.com.foxminded.sqljdbcschool.entity.Student;
 import ua.com.foxminded.sqljdbcschool.repository.CourseRepository;
 import ua.com.foxminded.sqljdbcschool.repository.GroupRepository;
 import ua.com.foxminded.sqljdbcschool.repository.StudentRepository;
@@ -21,19 +24,62 @@ public class SqlJdbcSchoolService {
      *
      * f. Remove the student from one of his or her courses
      */
-    ConnectionService connectionService;
+    private CourseRepository courseRepository;
+    private GroupRepository groupRepository;
+    private StudentRepository studentRepository;
 
-    public SqlJdbcSchoolService(ConnectionService connectionService) {
-        this.connectionService = connectionService;
+    public SqlJdbcSchoolService(CourseRepository courseRepository,
+                                GroupRepository groupRepository,
+                                StudentRepository studentRepository) {
+        this.groupRepository = groupRepository;
+        this.studentRepository = studentRepository;
+        this.courseRepository = courseRepository;
+        init();
     }
 
-    public void init() {
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
+    public List<Course> getAllCoursesByStudentId(Long id) {
+        return courseRepository.findAllCoursesByStudentId(id);
+    }
+
+    public <T> List<String> toListOfString(Collection<T> entities) {
+        List<String> result = new ArrayList<>();
+        entities.forEach(entity -> {
+            result.add(entity.toString());
+        });
+        return result;
+    }
+
+    public void addStudentToCourse(Long studentId, Long courseId) {
+        studentRepository.assignCourseToStudent(studentId, courseId);
+    }
+
+    public void findAllGroupsByStudentCount(Long count) {
+
+    }
+
+    public void findAllStudentsByCourseName(String courseName) {
+
+    }
+
+    public void addNewStudent() {
+
+    }
+
+    public void deleteStudentById(Long id) {
+
+    }
+
+    public void removeStudentFromCourse(Long studentId, Long courseId) {
+
+    }
+
+    private void init() {
         TestDataGenerationService dataService = new TestDataGenerationService(GroupGenerator.random,
                 StudentGenerator.random, new CourseCreator());
-
-        GroupRepository groupRepository = new GroupRepository(connectionService);
-        StudentRepository studentRepository = new StudentRepository(connectionService);
-        CourseRepository courseRepository = new CourseRepository(connectionService);
 
         TablesPopulationService tablesPopulationService = new TablesPopulationService(
                 dataService.getGroups(), dataService.getStudents(), dataService.getCourses());
@@ -41,37 +87,5 @@ public class SqlJdbcSchoolService {
                                .setStudentRepository(studentRepository)
                                .setCourseRepository(courseRepository);
         tablesPopulationService.populateTables();
-    }
-
-    public void run() {
-
-    }
-
-    private void addStudentToCourse(Student student, Course course) {
-
-    }
-
-    private void addStudentToCourse(Long studentId, Long courseId) {
-
-    }
-
-    private void findAllGroupsByStudentCount(Long count) {
-
-    }
-
-    private void findAllStudentsByCourseName(String courseName) {
-
-    }
-
-    private void addNewStudent() {
-
-    }
-
-    private void deleteStudentById(Long id) {
-
-    }
-
-    private void removeStudentFromACourse() {
-
     }
 }

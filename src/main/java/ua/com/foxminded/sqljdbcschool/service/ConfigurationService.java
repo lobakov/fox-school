@@ -17,13 +17,14 @@ public class ConfigurationService {
         this.reader = reader;
         this.config = new ConnectionConfig(reader);
         this.connectionService = new ConnectionService(config);
+        initDb();
     }
 
     public ConnectionService getConnectionService() {
         return this.connectionService;
     }
 
-    public void initDb() {
+    private void initDb() {
         TablesCreationService tablesCreationService = new TablesCreationService(connectionService);
 
         try {
