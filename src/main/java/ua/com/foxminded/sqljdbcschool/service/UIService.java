@@ -60,7 +60,7 @@ public class UIService {
                     break;
                 case 'f': removeStudentFromCourse();
                     break;
-                case 'g': UIProvider.display(ANY_KEY);
+                case 'g': UIProvider.display(BYE);
                         return;
                 default: continue;
             }

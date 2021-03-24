@@ -78,6 +78,7 @@ public class TestDataGenerationService {
                     break;
                 }
                 studentStack.pop().setGroup(group);
+                ++numberOfStudents;
             }
         }
     }

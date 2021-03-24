@@ -53,8 +53,10 @@ public class TablesPopulationService {
     private void assignStudentsToGroups() throws InterruptedException {
         for (Student student: students) {
             Long groupId = student.getGroup().getId();
-            student.setGroupId(groupId);
-            studentRepository.assignStudentToGroup(student.getId(), groupId);
+            if (groupId != null) {
+                student.setGroupId(groupId);
+                studentRepository.assignStudentToGroup(student.getId(), groupId);
+            }
         }
     }
 

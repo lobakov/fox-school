@@ -23,6 +23,7 @@ public class StudentRepository extends JdbcSchoolRepository<Student> {
                 PreparedStatement statement = connection.prepareStatement(sqlStatement)) {
             statement.setLong(1, groupId);
             statement.setLong(2, id);
+            System.out.println(statement.toString());
             statement.executeUpdate();
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();

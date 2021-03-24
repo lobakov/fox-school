@@ -18,31 +18,31 @@ public class GroupRepository extends JdbcSchoolRepository<Group> {
         super(connectionService);
     }
 
-//    public List<Group> findAllGroupsByStudentCount(Long count) {
-//        List<Group> result = new ArrayList<>();
-//        String request = "SELECT courses.id, courses.name, courses.description FROM"
-//                + "(SELECT course_id FROM students_courses WHERE student_id = ?)"
-//                + "LEFT JOIN courses ON course_id = id";
-//        try (Connection connection = connectionService.getConnection();
-//                        PreparedStatement statement = connection.prepareStatement(request)) {
-//            statement.setLong(1, studentId);
-//            try (ResultSet resultSet = statement.executeQuery(request)) {
-//                while(resultSet.next()){
-//                    Long id  = resultSet.getLong("id");
-//                    String name = resultSet.getString("name");
-//                    String description = resultSet.getString("description");
-//                    Course course = new Course(name, description);
-//                    course.setId(id);
-//                    result.add(course);
-//                }
-//            } catch (SQLException sqlex) {
-//                sqlex.printStackTrace();
-//            }
-//        } catch (SQLException sqlex) {
-//            sqlex.printStackTrace();
-//        }
-//        return result;
-//    }
+    public List<Group> findAllGroupsByStudentCount(Long count) {
+        List<Group> result = new ArrayList<>();
+        String request = "SELECT courses.id, courses.name, courses.description FROM"
+                + "(SELECT course_id FROM students_courses WHERE student_id = ?)"
+                + "LEFT JOIN courses ON course_id = id";
+        try (Connection connection = connectionService.getConnection();
+                        PreparedStatement statement = connection.prepareStatement(request)) {
+            statement.setLong(1, studentId);
+            try (ResultSet resultSet = statement.executeQuery(request)) {
+                while(resultSet.next()){
+                    Long id  = resultSet.getLong("id");
+                    String name = resultSet.getString("name");
+                    String description = resultSet.getString("description");
+                    Course course = new Course(name, description);
+                    course.setId(id);
+                    result.add(course);
+                }
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+            }
+        } catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        return result;
+    }
 
     @Override
     public void save(Group group) {
