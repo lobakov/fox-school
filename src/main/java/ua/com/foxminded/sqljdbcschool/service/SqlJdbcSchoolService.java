@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import ua.com.foxminded.sqljdbcschool.entity.Course;
+import ua.com.foxminded.sqljdbcschool.entity.Group;
 import ua.com.foxminded.sqljdbcschool.repository.CourseRepository;
 import ua.com.foxminded.sqljdbcschool.repository.GroupRepository;
 import ua.com.foxminded.sqljdbcschool.repository.StudentRepository;
@@ -53,12 +54,16 @@ public class SqlJdbcSchoolService {
         return result;
     }
 
+    public Long getStudentCountByGroupId(Long id) {
+        return groupRepository.getStudentCountByGroupId(id);
+    }
+
     public void addStudentToCourse(Long studentId, Long courseId) {
         studentRepository.assignCourseToStudent(studentId, courseId);
     }
 
-    public void findAllGroupsByStudentCount(Long count) {
-
+    public List<Group> findAllGroupsByStudentCount(Long count) {
+        return groupRepository.findAllGroupsByStudentCount(count);
     }
 
     public void findAllStudentsByCourseName(String courseName) {

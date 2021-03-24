@@ -1,7 +1,9 @@
 package ua.com.foxminded.sqljdbcschool.service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -69,23 +71,39 @@ public class UIService {
     }
 
     private void addStudentToCourse() {
-        List<String> courses = jdbcSchool.toListOfString(jdbcSchool.getAllCourses());
-        String menu = menuProvider.getAddStudentToCourseMenu(courses);
-        Scanner scanner = new Scanner(System.in);
+        String menu = menuProvider.getAddStudentToCourseMenu();
         UIProvider.display(menu);
+        Scanner scanner = new Scanner(System.in);
         Long studentId = scanner.nextLong();
+        List<String> allCourses = jdbcSchool.toListOfString(jdbcSchool.getAllCourses());
+        List<String> studentCourses = jdbcSchool.toListOfString(jdbcSchool.getAllCoursesByStudentId(studentId));
+        menu = menuProvider.getAddStudentToCourseSubMenu(allCourses, studentCourses);
+        UIProvider.display(menu);
         Long courseId = scanner.nextLong();
         jdbcSchool.addStudentToCourse(studentId, courseId);
         scanner.close();
     }
 
-//    private void findAllGroupsByStudentCount() {
-//
-//        Scanner scanner = new Scanner(System.in);
-//        UIProvider.display(menuProvider.getGroupsByStudentCountMenu());
-//
-//        scanner.close();
-//    }
+    private void findAllGroupsByStudentCount() {
+        String menu = menuProvider.getGroupsByStudentCountMenu();
+        UIProvider.display(menu);
+        Scanner scanner = new Scanner(System.in);
+        Long studentCount = scanner.nextLong();
+        Map<String, Long> groups = new HashMap<>();
+
+        if (studentCount > 0) {
+            jdbcSchool.findAllGroupsByStudentCount(studentCount).stream()
+                .forEach(group ->
+                    groups.put(group.toString(), jdbcSchool.getStudentCountByGroupId(group.getId()))
+                );
+        } else {
+            jdbcSchool.findAllGroupsByStudentCount(studentCount).stream()
+                .forEach(group ->
+                    groups.put(group.toString(), 0l));
+        }
+        menu = menuProvider.getGroupsByStudentCountSubMenu(groups, studentCount);
+        scanner.close();
+    }
 //
 //    private void findAllStudentsByCourseName() {
 //

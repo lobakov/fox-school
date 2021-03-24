@@ -1,6 +1,7 @@
 package ua.com.foxminded.sqljdbcschool.view;
 
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 public class MenuProvider {
@@ -19,6 +20,7 @@ public class MenuProvider {
      * f. Remove the student from one of his or her courses
      */
     private static final String NL = System.lineSeparator();
+    private static final String COURSES_HEADER = "id. Course - Description";
     private static final String EMPTY_LINE = "";
 
     public String getMainMenu() {
@@ -39,17 +41,22 @@ public class MenuProvider {
         return joiner.toString();
     }
 
-    public String getAddStudentToCourseMenu(List<String> courses) {
+    public String getAddStudentToCourseMenu() {
+        return "Assign course to student. Please enter student id: ";
+    }
+
+    public String getAddStudentToCourseSubMenu(List<String> allCourses, List<String> studentCourses) {
         final String legend = "List of available courses: ";
-        final String header = "id. Course - Description";
         StringJoiner joiner = new StringJoiner(NL);
 
-        joiner.add(legend).add(EMPTY_LINE).add(header);
-
-        for (String course: courses) {
+        joiner.add(legend).add(EMPTY_LINE).add(COURSES_HEADER);
+        for (String course: allCourses) {
             joiner.add(course);
         }
-        final String info = "Add student to course. Input format: <student id> <course id>";
+
+        final String currentCoursesInfo = "List of courses currently assigned to student: ";
+        joiner.add(EMPTY_LINE).add(currentCoursesInfo).add(COURSES_HEADER);
+        final String info = "Enter course id to assign course to student:";
         joiner.add(EMPTY_LINE).add(info);
         return joiner.toString();
     }
@@ -60,10 +67,9 @@ public class MenuProvider {
 
     public String getRemoveStudentFromCourseSubMenu(List<String> courses) {
         final String legend = "List of chosen student courses: ";
-        final String header = "id. Course - Description";
         StringJoiner joiner = new StringJoiner(NL);
 
-        joiner.add(legend).add(EMPTY_LINE).add(header);
+        joiner.add(legend).add(EMPTY_LINE).add(COURSES_HEADER);
         for (String course: courses) {
             joiner.add(course);
         }
@@ -73,10 +79,32 @@ public class MenuProvider {
         return joiner.toString();
     }
 
-//    public String getGroupsByStudentCountMenu() {
-//
-//    }
-//
+    public String getGroupsByStudentCountMenu() {
+        final String legend = "To see groups with less or equal amount of students, enter amount of students: ";
+        return legend;
+    }
+
+    public String getGroupsByStudentCountSubMenu(Map<String, Long> groups, Long count) {
+        StringJoiner joiner = new StringJoiner(NL);
+        final String legend = "List of groups with desired student count: ";
+        final String header = "id. Group name Count";
+        final String emptyGroupsLegend = "List of groups with no students: ";
+        final String emptyGroupsHeader = "id. Group name";
+
+        if (count > 0) {
+            joiner.add(legend).add(EMPTY_LINE).add(header);
+            for (Map.Entry<String, Long> entry: groups.entrySet()) {
+                joiner.add(entry.getKey() + entry.getValue());
+            }
+        } else {
+            joiner.add(emptyGroupsLegend).add(EMPTY_LINE).add(emptyGroupsHeader);
+            for (Map.Entry<String, Long> entry: groups.entrySet()) {
+                joiner.add(entry.getKey());
+            }
+        }
+        return joiner.toString();
+    }
+
 //    public String getStudentsByCourseNameMenu() {
 //
 //    }
