@@ -20,9 +20,9 @@ public class SqlJdbcSchoolService {
      *
      * d. Delete student by STUDENT_ID
      *
-     * e. Add a student to the course (from a list)
+     * V e. Add a student to the course (from a list)
      *
-     * f. Remove the student from one of his or her courses
+     * V f. Remove the student from one of his or her courses
      */
     private CourseRepository courseRepository;
     private GroupRepository groupRepository;
@@ -30,7 +30,7 @@ public class SqlJdbcSchoolService {
 
     public SqlJdbcSchoolService(CourseRepository courseRepository,
                                 GroupRepository groupRepository,
-                                StudentRepository studentRepository) {
+                                StudentRepository studentRepository) throws InterruptedException {
         this.groupRepository = groupRepository;
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
@@ -73,11 +73,11 @@ public class SqlJdbcSchoolService {
 
     }
 
-    public void removeStudentFromCourse(Long studentId, Long courseId) {
-
+    public void removeStudentFromCourse(Long studentId, List<Long> courseIds) {
+        studentRepository.removeStudentFromCourses(studentId, courseIds);
     }
 
-    private void init() {
+    private void init() throws InterruptedException {
         TestDataGenerationService dataService = new TestDataGenerationService(GroupGenerator.random,
                 StudentGenerator.random, new CourseCreator());
 

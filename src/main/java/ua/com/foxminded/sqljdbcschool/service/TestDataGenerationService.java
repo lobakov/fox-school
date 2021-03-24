@@ -74,6 +74,9 @@ public class TestDataGenerationService {
             }
             int numberOfStudents = 0;
             while (numberOfStudents < targetAmount) {
+                if (studentStack.isEmpty()) {
+                    break;
+                }
                 studentStack.pop().setGroup(group);
             }
         }

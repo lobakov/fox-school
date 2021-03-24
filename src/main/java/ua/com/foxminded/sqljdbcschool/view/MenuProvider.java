@@ -64,7 +64,6 @@ public class MenuProvider {
         StringJoiner joiner = new StringJoiner(NL);
 
         joiner.add(legend).add(EMPTY_LINE).add(header);
-
         for (String course: courses) {
             joiner.add(course);
         }
@@ -74,19 +73,19 @@ public class MenuProvider {
         return joiner.toString();
     }
 
-    public String getGroupsByStudentCountMenu() {
-
-    }
-
-    public String getStudentsByCourseNameMenu() {
-
-    }
-
-    public String getAddNewStudentMenu() {
-
-    }
-
-    public String getDeleteStudentByIdMenu() {
-
-    }
+//    public String getGroupsByStudentCountMenu() {
+//
+//    }
+//
+//    public String getStudentsByCourseNameMenu() {
+//
+//    }
+//
+//    public String getAddNewStudentMenu() {
+//
+//    }
+//
+//    public String getDeleteStudentByIdMenu() {
+//
+//    }
 }

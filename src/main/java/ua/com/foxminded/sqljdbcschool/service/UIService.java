@@ -1,7 +1,9 @@
 package ua.com.foxminded.sqljdbcschool.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import ua.com.foxminded.sqljdbcschool.view.MenuProvider;
 import ua.com.foxminded.sqljdbcschool.view.UIProvider;
@@ -21,6 +23,12 @@ public class UIService {
      *
      * f. Remove the student from one of his or her courses
      */
+
+    //TODO: add user input checks
+
+    private static final String ANY_KEY = "Press any key to continue...";
+    private static final String BYE = "Now exiting. Goodbye!";
+
     private SqlJdbcSchoolService jdbcSchool;
     private MenuProvider menuProvider;
 
@@ -40,19 +48,20 @@ public class UIService {
             UIProvider.display(menuProvider.getMainMenu());
             key = scanner.next().charAt(0);
             switch (key) {
-                case 'a': findAllGroupsByStudentCount();
-                    break;
-                case 'b': findAllStudentsByCourseName();
-                    break;
-                case 'c': addNewStudent();
-                    break;
-                case 'd': deleteStudentById();
-                    break;
+//                case 'a': findAllGroupsByStudentCount();
+//                    break;
+//                case 'b': findAllStudentsByCourseName();
+//                    break;
+//                case 'c': addNewStudent();
+//                    break;
+//                case 'd': deleteStudentById();
+//                    break;
                 case 'e': addStudentToCourse();
                     break;
                 case 'f': removeStudentFromCourse();
                     break;
-                case 'g': return;
+                case 'g': UIProvider.display(ANY_KEY);
+                        return;
                 default: continue;
             }
         }
@@ -70,47 +79,60 @@ public class UIService {
         scanner.close();
     }
 
-    private void findAllGroupsByStudentCount() {
-
-        Scanner scanner = new Scanner(System.in);
-        UIProvider.display(menuProvider.getGroupsByStudentCountMenu());
-
-        scanner.close();
-    }
-
-    private void findAllStudentsByCourseName() {
-
-        Scanner scanner = new Scanner(System.in);
-        UIProvider.display(menuProvider.getStudentsByCourseNameMenu());
-
-        scanner.close();
-    }
-
-    private void addNewStudent() {
-
-        Scanner scanner = new Scanner(System.in);
-        UIProvider.display(menuProvider.getAddNewStudentMenu());
-
-        scanner.close();
-    }
-
-    private void deleteStudentById() {
-
-        Scanner scanner = new Scanner(System.in);
-        UIProvider.display(menuProvider.getDeleteStudentByIdMenu());
-
-        scanner.close();
-    }
+//    private void findAllGroupsByStudentCount() {
+//
+//        Scanner scanner = new Scanner(System.in);
+//        UIProvider.display(menuProvider.getGroupsByStudentCountMenu());
+//
+//        scanner.close();
+//    }
+//
+//    private void findAllStudentsByCourseName() {
+//
+//        Scanner scanner = new Scanner(System.in);
+//        UIProvider.display(menuProvider.getStudentsByCourseNameMenu());
+//
+//        scanner.close();
+//    }
+//
+//    private void addNewStudent() {
+//
+//        Scanner scanner = new Scanner(System.in);
+//        UIProvider.display(menuProvider.getAddNewStudentMenu());
+//
+//        scanner.close();
+//    }
+//
+//    private void deleteStudentById() {
+//
+//        Scanner scanner = new Scanner(System.in);
+//        UIProvider.display(menuProvider.getDeleteStudentByIdMenu());
+//
+//        scanner.close();
+//    }
 
     private void removeStudentFromCourse() {
         String menu = menuProvider.getRemoveStudentFromCourseMenu();
-        Scanner scanner = new Scanner(System.in);
         UIProvider.display(menu);
-        Long id = scanner.nextLong();
-        List<String> courses = jdbcSchool.toListOfString(jdbcSchool.getAllCoursesByStudentId(id));
+        Scanner scanner = new Scanner(System.in);
+
+        Long studentId = scanner.nextLong();
+        List<String> courses = jdbcSchool.toListOfString(jdbcSchool.getAllCoursesByStudentId(studentId));
+
         String subMenu = menuProvider.getRemoveStudentFromCourseSubMenu(courses);
         UIProvider.display(subMenu);
 
+        String[] input = scanner.nextLine().split(" ");
+        List<Long> courseIds = Arrays.asList(input)
+                                     .stream()
+                                     .map(id -> Long.valueOf(id))
+                                     .collect(Collectors.toList());
+        jdbcSchool.removeStudentFromCourse(studentId, courseIds);
+        courses = jdbcSchool.toListOfString(jdbcSchool.getAllCoursesByStudentId(studentId));
+        subMenu = menuProvider.getRemoveStudentFromCourseSubMenu(courses);
+        UIProvider.display(subMenu);
+        UIProvider.display(ANY_KEY);
+        scanner.next();
         scanner.close();
     }
 }

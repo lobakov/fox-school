@@ -42,7 +42,7 @@ public class TablesPopulationService {
         this.courses = courses;
     }
 
-    public void populateTables() {
+    public void populateTables() throws InterruptedException {
         populate(groups, groupRepository.saveEntity);
         populate(courses.stream().collect(Collectors.toSet()), courseRepository.saveEntity);
         populate(students, studentRepository.saveEntity);
@@ -50,7 +50,7 @@ public class TablesPopulationService {
         assignCoursesToStudents();
     }
 
-    private void assignStudentsToGroups() {
+    private void assignStudentsToGroups() throws InterruptedException {
         for (Student student: students) {
             Long groupId = student.getGroup().getId();
             student.setGroupId(groupId);

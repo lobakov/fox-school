@@ -13,7 +13,7 @@ import ua.com.foxminded.sqljdbcschool.view.MenuProvider;
 public class SqlJdbcSchoolApplication {
     //TODO: 1. Change project name 2. Fat Jar
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ConfigurationService configurationService = new ConfigurationService(new FileReader());
 
         ConnectionService connectionService = configurationService.getConnectionService();

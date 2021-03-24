@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import java.util.StringJoiner;
 
 import ua.com.foxminded.sqljdbcschool.entity.Student;
 import ua.com.foxminded.sqljdbcschool.service.ConnectionService;
@@ -15,8 +17,8 @@ public class StudentRepository extends JdbcSchoolRepository<Student> {
         super(connectionService);
     }
 
-    public void assignStudentToGroup(Long id, Long groupId) {
-        String sqlStatement = "INSERT INTO students (group_id) VALUES (?) WHERE id = ?";
+    public void assignStudentToGroup(Long id, Long groupId) throws InterruptedException {
+        String sqlStatement = "UPDATE students SET group_id = ? WHERE id = ?";
         try (Connection connection = connectionService.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sqlStatement)) {
             statement.setLong(1, groupId);
@@ -33,6 +35,32 @@ public class StudentRepository extends JdbcSchoolRepository<Student> {
                 PreparedStatement statement = connection.prepareStatement(sqlStatement)) {
             statement.setLong(1, id);
             statement.setLong(2, courseId);
+            statement.executeUpdate();
+        } catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+    }
+
+    public void removeStudentFromCourses(Long studentId, List<Long> courseIds) {
+        String sqlBase = "DELETE FROM students_courses WHERE student_id = ? AND course_id IN (";
+        StringJoiner sqlStatement = new StringJoiner("");
+
+        sqlStatement.add(sqlBase);
+        int numberOfIds = courseIds.size();
+        for (int i = 1; i <= numberOfIds; i++) {
+            sqlStatement.add("?");
+            if (i < numberOfIds) {
+                sqlStatement.add(", ");
+            }
+        }
+        sqlStatement.add(")");
+
+        try (Connection connection = connectionService.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sqlStatement.toString())) {
+            statement.setLong(0, studentId);
+            for (int i = 1; i < numberOfIds; i++) {
+                statement.setLong(i , courseIds.get(i));
+            }
             statement.executeUpdate();
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
