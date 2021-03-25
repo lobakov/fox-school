@@ -25,7 +25,6 @@ public class StudentRepository extends JdbcSchoolRepository<Student> {
                 PreparedStatement statement = connection.prepareStatement(sqlStatement)) {
             statement.setLong(1, groupId);
             statement.setLong(2, id);
-            System.out.println(statement.toString());
             statement.executeUpdate();
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
@@ -36,17 +35,17 @@ public class StudentRepository extends JdbcSchoolRepository<Student> {
         List<Student> result = new ArrayList<>();
         String query = "SELECT students.id, first_name, last_name, group_id FROM students JOIN "
                 + "(SELECT student_id FROM students_courses AS stc JOIN "
-                + "(SELECT id FROM courses WHERE name = '?') AS ids "
+                + "(SELECT id FROM courses WHERE name = ?) AS ids "
                 + "ON stc.course_id = ids.id) AS sti ON students.id = sti.student_id";
 
         try (Connection connection = connectionService.getConnection();
                     PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, courseName);
-            try (ResultSet resultSet = statement.executeQuery(query)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()){
                     Long id  = resultSet.getLong("id");
-                    String firstName = resultSet.getString("firstName");
-                    String lastName = resultSet.getString("lastName");
+                    String firstName = resultSet.getString("first_name");
+                    String lastName = resultSet.getString("last_name");
                     Student student = new Student(firstName, lastName);
                     student.setId(id);
                     Long groupId = resultSet.getLong("group_id");
@@ -103,9 +102,9 @@ public class StudentRepository extends JdbcSchoolRepository<Student> {
 
         try (Connection connection = connectionService.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sqlStatement.toString())) {
-            statement.setLong(0, studentId);
-            for (int i = 1; i < numberOfIds; i++) {
-                statement.setLong(i , courseIds.get(i));
+            statement.setLong(1, studentId);
+            for (int i = 2; i <= numberOfIds + 1; i++) {
+                statement.setLong(i , courseIds.get(i - 2));
             }
             statement.executeUpdate();
         } catch (SQLException sqlex) {

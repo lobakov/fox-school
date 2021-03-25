@@ -42,6 +42,9 @@ public class MenuProvider {
         }
         final String currentCoursesInfo = "List of courses currently assigned to student: ";
         joiner.add(EMPTY_LINE).add(currentCoursesInfo).add(COURSES_HEADER);
+        for (String course: studentCourses) {
+            joiner.add(course);
+        }
         final String info = "Enter course id to assign course to student:";
         joiner.add(EMPTY_LINE).add(info);
         return joiner.toString();

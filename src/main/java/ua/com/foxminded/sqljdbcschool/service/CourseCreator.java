@@ -10,8 +10,8 @@ import ua.com.foxminded.sqljdbcschool.utility.Randomizer;
 public class CourseCreator {
 
     private static final String[] COURSE_NAMES = new String[] {
-            "Algebra", "Astronomy", "Biology", "Chemistry", "Economics",
-            "English", "Geometry", "Geography", "History", "Physics"
+            "algebra", "astronomy", "biology", "chemistry", "economics",
+            "english", "geometry", "geography", "history", "physics"
     };
 
     private static final String[] COURSE_DESCRIPTIONS = new String[] {

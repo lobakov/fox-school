@@ -26,7 +26,7 @@ public class GroupRepository extends JdbcSchoolRepository<Group> {
         try (Connection connection = connectionService.getConnection();
                     PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery(query)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                if (resultSet.next()) {
                     result  = resultSet.getLong("count");
                 }
@@ -45,7 +45,7 @@ public class GroupRepository extends JdbcSchoolRepository<Group> {
         try (Connection connection = connectionService.getConnection();
                     PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery(query)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                while (resultSet.next()) {
                    Long groupId  = resultSet.getLong("id");
                    String name = resultSet.getString("name");
@@ -68,7 +68,7 @@ public class GroupRepository extends JdbcSchoolRepository<Group> {
         if (count > 0) {
             request = "SELECT groups.id, groups.name, count FROM groups JOIN "
                     + "(SELECT group_id, count(*) FROM students WHERE group_id IS NOT NULL GROUP BY group_id) AS cnt "
-                    + "ON group_id = groups.id WHERE count <= ? ORDER BY count";
+                    + "ON cnt.group_id = groups.id WHERE count <= ? ORDER BY count";
         } else {
             request = "SELECT groups.id, groups.name FROM groups WHERE groups.id NOT IN (SELECT group_id FROM students "
                     + "WHERE group_id IS NOT NULL)";
@@ -79,7 +79,7 @@ public class GroupRepository extends JdbcSchoolRepository<Group> {
             if (count > 0) {
                 statement.setLong(1, count);
             }
-            try (ResultSet resultSet = statement.executeQuery(request)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()){
                     Long id  = resultSet.getLong("id");
                     String name = resultSet.getString("name");
@@ -93,6 +93,7 @@ public class GroupRepository extends JdbcSchoolRepository<Group> {
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
+        System.out.println(result);
         return result;
     }
 

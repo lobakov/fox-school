@@ -20,12 +20,12 @@ public class CourseRepository extends JdbcSchoolRepository<Course> {
     public List<Course> findAllCoursesByStudentId(Long studentId) {
         List<Course> result = new ArrayList<>();
         String request = "SELECT courses.id, courses.name, courses.description FROM"
-                + "(SELECT course_id FROM students_courses WHERE student_id = ?)"
-                + "LEFT JOIN courses ON course_id = id";
+                + "(SELECT course_id FROM students_courses WHERE student_id = ?) AS cid "
+                + "LEFT JOIN courses ON cid.course_id = courses.id";
         try (Connection connection = connectionService.getConnection();
                         PreparedStatement statement = connection.prepareStatement(request)) {
             statement.setLong(1, studentId);
-            try (ResultSet resultSet = statement.executeQuery(request)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()){
                     Long id  = resultSet.getLong("id");
                     String name = resultSet.getString("name");
