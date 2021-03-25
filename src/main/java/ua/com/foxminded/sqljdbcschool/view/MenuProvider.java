@@ -6,19 +6,6 @@ import java.util.StringJoiner;
 
 public class MenuProvider {
 
-    /*
-     * a. Find all groups with less or equals student count
-     *
-     * b. Find all students related to course with given name
-     *
-     * c. Add new student
-     *
-     * d. Delete student by STUDENT_ID
-     *
-     * e. Add a student to the course (from a list)
-     *
-     * f. Remove the student from one of his or her courses
-     */
     private static final String NL = System.lineSeparator();
     private static final String COURSES_HEADER = "id. Course - Description";
     private static final String EMPTY_LINE = "";
@@ -53,7 +40,6 @@ public class MenuProvider {
         for (String course: allCourses) {
             joiner.add(course);
         }
-
         final String currentCoursesInfo = "List of courses currently assigned to student: ";
         joiner.add(EMPTY_LINE).add(currentCoursesInfo).add(COURSES_HEADER);
         final String info = "Enter course id to assign course to student:";
@@ -79,41 +65,70 @@ public class MenuProvider {
         return joiner.toString();
     }
 
+    public String getStudentsByCourseNameMenu() {
+        final String legend = "Provide course name to see list of assigned students: ";
+        return legend;
+    }
+
+    public String getStudentsByCourseNameSubMenu(List<String> students, String courseName) {
+        final String legend = "List of students assigned to " + courseName + " course";
+        final String header = "id. First Name Last Name Group";
+        StringJoiner joiner = new StringJoiner(NL);
+
+        joiner.add(legend).add(EMPTY_LINE).add(header);
+        for (String student: students) {
+            joiner.add(student);
+        }
+        return joiner.toString();
+    }
+
+    public String getAddNewStudentMenu() {
+        final String legend = "To add new student, please provide space separated first and last name: ";
+        return legend;
+    }
+
+    public String getAddNewStudentSubMenu(String student) {
+        final String legend = "Student was created: " + NL + student;
+        return legend;
+    }
+
+    public String getDeleteStudentByIdMenu() {
+        return "To delete student, please provide student id: ";
+    }
+
+    public String getDeleteStudentByIdSubMenu() {
+        return "Student has been deleted";
+    }
+
     public String getGroupsByStudentCountMenu() {
         final String legend = "To see groups with less or equal amount of students, enter amount of students: ";
         return legend;
     }
 
     public String getGroupsByStudentCountSubMenu(Map<String, Long> groups, Long count) {
-        StringJoiner joiner = new StringJoiner(NL);
         final String legend = "List of groups with desired student count: ";
         final String header = "id. Group name Count";
         final String emptyGroupsLegend = "List of groups with no students: ";
         final String emptyGroupsHeader = "id. Group name";
 
-        if (count > 0) {
-            joiner.add(legend).add(EMPTY_LINE).add(header);
-            for (Map.Entry<String, Long> entry: groups.entrySet()) {
-                joiner.add(entry.getKey() + entry.getValue());
-            }
+        StringJoiner joiner = new StringJoiner(NL);
+        boolean isEmpty = (count <= 0);
+        if (isEmpty) {
+            joiner.add(groupsToString(emptyGroupsLegend, emptyGroupsHeader, groups, isEmpty));
         } else {
-            joiner.add(emptyGroupsLegend).add(EMPTY_LINE).add(emptyGroupsHeader);
-            for (Map.Entry<String, Long> entry: groups.entrySet()) {
-                joiner.add(entry.getKey());
-            }
+            joiner.add(groupsToString(legend, header, groups, isEmpty));
         }
         return joiner.toString();
     }
 
-//    public String getStudentsByCourseNameMenu() {
-//
-//    }
-//
-//    public String getAddNewStudentMenu() {
-//
-//    }
-//
-//    public String getDeleteStudentByIdMenu() {
-//
-//    }
+    private String groupsToString(String legend, String header, Map<String, Long> groups, boolean isEmpty) {
+        StringJoiner joiner = new StringJoiner(NL);
+        joiner.add(legend).add(EMPTY_LINE).add(header);
+        for (Map.Entry<String, Long> entry: groups.entrySet()) {
+            String group = entry.getKey();
+            String value = isEmpty ? "" : (" " + entry.getValue().toString());
+            joiner.add(group + value);
+        }
+        return joiner.toString();
+    }
 }

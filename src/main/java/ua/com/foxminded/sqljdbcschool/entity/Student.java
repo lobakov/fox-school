@@ -104,6 +104,7 @@ public class Student {
 
     @Override
     public String toString() {
-        return id + ". " + firstName + " " + lastName + "  group: " + group.getName();
+        String group = (this.group == null) ? "none" : (this.group.getName());
+        return id + ". " + firstName + " " + lastName + "  group: " + group;
     }
 }

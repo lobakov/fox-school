@@ -10,6 +10,7 @@ import java.util.List;
 
 import ua.com.foxminded.sqljdbcschool.entity.Course;
 import ua.com.foxminded.sqljdbcschool.entity.Group;
+import ua.com.foxminded.sqljdbcschool.entity.Student;
 import ua.com.foxminded.sqljdbcschool.service.ConnectionService;
 
 public class GroupRepository extends JdbcSchoolRepository<Group> {
@@ -36,6 +37,28 @@ public class GroupRepository extends JdbcSchoolRepository<Group> {
             sqlex.printStackTrace();
         }
         return result;
+    }
+
+    public Group findGroupById(Long id) {
+        String query = "SELECT * FROM groups WHERE id = ?";
+        Group group = null;
+        try (Connection connection = connectionService.getConnection();
+                    PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setLong(1, id);
+            try (ResultSet resultSet = statement.executeQuery(query)) {
+               while (resultSet.next()) {
+                   Long groupId  = resultSet.getLong("id");
+                   String name = resultSet.getString("name");
+                   group = new Group(name);
+                   group.setId(groupId);
+               }
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+            }
+        } catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        return group;
     }
 
     public List<Group> findAllGroupsByStudentCount(Long count) {

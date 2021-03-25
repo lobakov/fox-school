@@ -6,25 +6,13 @@ import java.util.List;
 
 import ua.com.foxminded.sqljdbcschool.entity.Course;
 import ua.com.foxminded.sqljdbcschool.entity.Group;
+import ua.com.foxminded.sqljdbcschool.entity.Student;
 import ua.com.foxminded.sqljdbcschool.repository.CourseRepository;
 import ua.com.foxminded.sqljdbcschool.repository.GroupRepository;
 import ua.com.foxminded.sqljdbcschool.repository.StudentRepository;
 
 public class SqlJdbcSchoolService {
 
-    /*
-     * a. Find all groups with less or equals student count
-     *
-     * b. Find all students related to course with given name
-     *
-     * c. Add new student
-     *
-     * d. Delete student by STUDENT_ID
-     *
-     * V e. Add a student to the course (from a list)
-     *
-     * V f. Remove the student from one of his or her courses
-     */
     private CourseRepository courseRepository;
     private GroupRepository groupRepository;
     private StudentRepository studentRepository;
@@ -46,14 +34,6 @@ public class SqlJdbcSchoolService {
         return courseRepository.findAllCoursesByStudentId(id);
     }
 
-    public <T> List<String> toListOfString(Collection<T> entities) {
-        List<String> result = new ArrayList<>();
-        entities.forEach(entity -> {
-            result.add(entity.toString());
-        });
-        return result;
-    }
-
     public Long getStudentCountByGroupId(Long id) {
         return groupRepository.getStudentCountByGroupId(id);
     }
@@ -66,16 +46,18 @@ public class SqlJdbcSchoolService {
         return groupRepository.findAllGroupsByStudentCount(count);
     }
 
-    public void findAllStudentsByCourseName(String courseName) {
-
+    public List<Student> findAllStudentsByCourseName(String courseName) {
+        return studentRepository.findAllStudentsByCourseName(courseName, groupRepository);
     }
 
-    public void addNewStudent() {
-
+    public String addNewStudent(String firstName, String lastName) {
+        Student student = new Student(firstName, lastName);
+        studentRepository.save(student);
+        return student.toString();
     }
 
     public void deleteStudentById(Long id) {
-
+        studentRepository.deleteStudentById(id);
     }
 
     public void removeStudentFromCourse(Long studentId, List<Long> courseIds) {
@@ -92,5 +74,13 @@ public class SqlJdbcSchoolService {
                                .setStudentRepository(studentRepository)
                                .setCourseRepository(courseRepository);
         tablesPopulationService.populateTables();
+    }
+
+    public <T> List<String> toListOfString(Collection<T> entities) {
+        List<String> result = new ArrayList<>();
+        entities.forEach(entity -> {
+            result.add(entity.toString());
+        });
+        return result;
     }
 }
