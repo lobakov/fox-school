@@ -12,13 +12,17 @@ public class MenuProvider {
 
     public String getMainMenu() {
         StringJoiner joiner = new StringJoiner(NL);
-        joiner.add("a. Find all groups with less or equals student count")
+        joiner.add("SqlJdbcShcool Application")
+              .add(EMPTY_LINE)
+              .add("Please enter corresponding letter for desired action:")
+              .add(EMPTY_LINE)
+              .add("a. Find all groups with less or equals student count")
               .add(EMPTY_LINE)
               .add("b. Find all students related to course with given name")
               .add(EMPTY_LINE)
               .add("c. Add new student")
               .add(EMPTY_LINE)
-              .add("d. Delete student by STUDENT_ID")
+              .add("d. Delete student by student id")
               .add(EMPTY_LINE)
               .add("e. Add a student to the course")
               .add(EMPTY_LINE)

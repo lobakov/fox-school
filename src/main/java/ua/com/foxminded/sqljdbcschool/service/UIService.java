@@ -15,6 +15,10 @@ public class UIService {
     //TODO: add user input checks
     private static final String ANY_KEY = "Press any key to continue...";
     private static final String BYE = "Now exiting. Goodbye!";
+    private static final String INVALID_INPUT = "Invalid input, expected: ";
+    private static final String LONG = "long value";
+    private static final String CHARACTER = "character";
+    private static final String STRING = "string value";
 
     private SqlJdbcSchoolService jdbcSchool;
     private MenuProvider menuProvider;
@@ -35,8 +39,7 @@ public class UIService {
             UIProvider.display(menuProvider.getMainMenu());
             key = scanner.next().charAt(0);
             switch (key) {
-                case 'a':
-                    findAllGroupsByStudentCount(scanner);
+                case 'a': findAllGroupsByStudentCount(scanner);
                     break;
                 case 'b': findAllStudentsByCourseName(scanner);
                     break;
@@ -49,7 +52,7 @@ public class UIService {
                 case 'f': removeStudentFromCourse(scanner);
                     break;
                 case 'g': UIProvider.display(BYE);
-                        return;
+                    return;
                 default: continue;
             }
         }

@@ -41,6 +41,8 @@ public class Group {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
+        if (obj == null)
+            return false;
         if (!(obj instanceof Group)) {
             return false;
         }

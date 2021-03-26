@@ -94,8 +94,9 @@ public class Student {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof Student)) {
             return false;
+        }
         Student other = (Student) obj;
         return (id == other.id) &&
                (firstName.equals(other.firstName)) &&
