@@ -7,6 +7,7 @@ import java.util.List;
 import ua.com.foxminded.sqljdbcschool.entity.Course;
 import ua.com.foxminded.sqljdbcschool.entity.Group;
 import ua.com.foxminded.sqljdbcschool.entity.Student;
+import ua.com.foxminded.sqljdbcschool.exception.RecordNotFoundException;
 import ua.com.foxminded.sqljdbcschool.repository.CourseRepository;
 import ua.com.foxminded.sqljdbcschool.repository.GroupRepository;
 import ua.com.foxminded.sqljdbcschool.repository.StudentRepository;
@@ -31,14 +32,18 @@ public class SqlJdbcSchoolService {
     }
 
     public List<Course> getAllCoursesByStudentId(Long id) {
+        checkIfStudentExist(id);
         return courseRepository.findAllCoursesByStudentId(id);
     }
 
     public Long getStudentCountByGroupId(Long id) {
+        checkIfGroupExist(id);
         return groupRepository.getStudentCountByGroupId(id);
     }
 
     public void addStudentToCourse(Long studentId, Long courseId) {
+        checkIfStudentExist(studentId);
+        checkIfCourseExist(courseId);
         studentRepository.assignCourseToStudent(studentId, courseId);
     }
 
@@ -57,10 +62,12 @@ public class SqlJdbcSchoolService {
     }
 
     public void deleteStudentById(Long id) {
+        checkIfStudentExist(id);
         studentRepository.deleteStudentById(id);
     }
 
     public void removeStudentFromCourse(Long studentId, List<Long> courseIds) {
+        checkIfStudentExist(studentId);
         studentRepository.removeStudentFromCourses(studentId, courseIds);
     }
 
@@ -82,5 +89,23 @@ public class SqlJdbcSchoolService {
             result.add(entity.toString());
         });
         return result;
+    }
+
+    private void checkIfStudentExist(Long id) {
+        if (!studentRepository.idExists(id)) {
+            throw new RecordNotFoundException("Student id " + id + "not found!");
+        }
+    }
+
+    private void checkIfCourseExist(Long id) {
+        if (!courseRepository.idExists(id)) {
+            throw new RecordNotFoundException("Course id " + id + "not found!");
+        }
+    }
+
+    private void checkIfGroupExist(Long id) {
+        if (!courseRepository.idExists(id)) {
+            throw new RecordNotFoundException("Group id " + id + "not found!");
+        }
     }
 }
