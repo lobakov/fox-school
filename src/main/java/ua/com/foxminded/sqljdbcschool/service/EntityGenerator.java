@@ -6,10 +6,6 @@ import java.util.function.Supplier;
 
 public class EntityGenerator {
 
-    private EntityGenerator() {
-
-    }
-
     public static <T> Set<T> generate(Supplier<T> create, int amount) {
         Set<T> entities = new HashSet<>();
         while (entities.size() < amount) {

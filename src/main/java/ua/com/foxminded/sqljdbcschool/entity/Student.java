@@ -12,6 +12,17 @@ public class Student {
     private Set<Course> courses;
     private Group group;
 
+    public Student() {
+
+    }
+
+    public Student(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.group = new Group();
+        this.courses = new HashSet<>();
+    }
+
     public Long getId() {
         return id;
     }
@@ -26,17 +37,6 @@ public class Student {
 
     public void setGroup(Group group) {
         this.group = group;
-    }
-
-    public Student() {
-
-    }
-
-    public Student(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.group = new Group();
-        this.courses = new HashSet<>();
     }
 
     public void setGroupId(Long id) {
