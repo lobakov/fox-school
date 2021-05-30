@@ -16,8 +16,7 @@ public class FileReader {
     public List<String> read(String fileName) throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(fileName);
-
-        if (inputStream == null) {
+        if (null == inputStream) {
             throw new FileNotFoundException("File " + fileName + " was not found. Check the file and try again");
         }
 
@@ -25,7 +24,7 @@ public class FileReader {
         try (InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 BufferedReader reader = new BufferedReader(streamReader)) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while (null != (line = reader.readLine())) {
                 content.add(line);
             }
         } catch (IOException e) {

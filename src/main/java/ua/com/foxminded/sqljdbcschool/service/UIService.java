@@ -10,62 +10,60 @@ import java.util.stream.Collectors;
 
 import ua.com.foxminded.sqljdbcschool.exception.RecordNotFoundException;
 import ua.com.foxminded.sqljdbcschool.view.MenuProvider;
+import ua.com.foxminded.sqljdbcschool.view.Text;
 import ua.com.foxminded.sqljdbcschool.view.UIProvider;
 
 public class UIService {
 
-    private static final String ANY_KEY = "Input any string and press enter to continue...";
-    private static final String BYE = "Now exiting. Goodbye!";
-    private static final String INVALID_INPUT = "Invalid input, please try again!";
-    private static final String LONG = "Expected long value.";
-    private static final String NO_RECORDS = "No records matching your criteria found";
-    private static final String STRING = "Expected string value.";
-    private static final String NAME_PATTERN = "^[a-zA-Z ]*$";
-    private static final String NAME_INVALID = "Invalid name/last name format."
-            + " Please ensure alphabetic characters only.";
+    private enum MainMenuItems {
 
+        FIND_GROUPS,
+        FIND_STUDENTS,
+        ADD_STUDENT,
+        DELETE_STUDENT,
+        ADD_COURSE,
+        REMOVE_COURSE,
+        EXIT;
+    };
+
+    private Scanner scanner;
     private SqlJdbcSchoolService jdbcSchool;
     private MenuProvider menuProvider;
+    private Map<MainMenuItems, Runnable> mainMenuItems;
 
     public UIService(SqlJdbcSchoolService jdbcSchool, MenuProvider menuProvider) {
         this.jdbcSchool = jdbcSchool;
         this.menuProvider = menuProvider;
+        this.scanner = new Scanner(System.in);
     }
 
     public void run() {
-        displayMainMenu();
-    }
-
-    private void displayMainMenu() {
-        Scanner scanner = new Scanner(System.in);
-        char key = ' ';
-        while (!(key == 'g')) {
+        initMainMenu();
+        int input = 0;
+        while (input != MainMenuItems.EXIT.ordinal()) {
             UIProvider.display(menuProvider.getMainMenu());
-            key = scanner.next().charAt(0);
-            switch (key) {
-                case 'a': findAllGroupsByStudentCount(scanner);
-                    break;
-                case 'b': findAllStudentsByCourseName(scanner);
-                    break;
-                case 'c': addNewStudent(scanner);
-                    break;
-                case 'd': deleteStudentById(scanner);
-                    break;
-                case 'e': addStudentToCourse(scanner);
-                    break;
-                case 'f': removeStudentFromCourse(scanner);
-                    break;
-                case 'g': UIProvider.display(BYE);
-                    return;
-                default: continue;
+            input = scanner.nextInt();
+            MainMenuItems item = MainMenuItems.values()[input];
+            if ((null != item) && (this.mainMenuItems.containsKey(item))) {
+                this.mainMenuItems.get(item).run();
             }
         }
-        scanner.close();
     }
 
-    private void addStudentToCourse(Scanner scanner) {
+    private void initMainMenu() {
+        mainMenuItems = new HashMap<>();
+        mainMenuItems.put(MainMenuItems.FIND_GROUPS, this::findAllGroupsByStudentCount);
+        mainMenuItems.put(MainMenuItems.FIND_STUDENTS, this::findAllStudentsByCourseName);
+        mainMenuItems.put(MainMenuItems.ADD_STUDENT, this::addNewStudent);
+        mainMenuItems.put(MainMenuItems.DELETE_STUDENT, this::deleteStudentById);
+        mainMenuItems.put(MainMenuItems.ADD_COURSE, this::addStudentToCourse);
+        mainMenuItems.put(MainMenuItems.REMOVE_COURSE, this::removeStudentFromCourse);
+        mainMenuItems.put(MainMenuItems.EXIT, this::exit);
+    }
+
+    private void addStudentToCourse() {
         String menu = menuProvider.getAddStudentToCourseMenu();
-        Long studentId = getLongInput(scanner, menu);
+        Long studentId = getLongInput(menu);
 
         List<String> studentCourses = null;
         try {
@@ -77,7 +75,7 @@ public class UIService {
 
         List<String> allCourses = jdbcSchool.toListOfString(jdbcSchool.getAllCourses());
         menu = menuProvider.getAddStudentToCourseSubMenu(allCourses, studentCourses);
-        Long courseId = getLongInput(scanner, menu);
+        Long courseId = getLongInput(menu);
         try {
             jdbcSchool.addStudentToCourse(studentId, courseId);
         } catch (RecordNotFoundException ex) {
@@ -86,9 +84,9 @@ public class UIService {
         }
     }
 
-    private void findAllGroupsByStudentCount(Scanner scanner) {
+    private void findAllGroupsByStudentCount() {
         String menu = menuProvider.getGroupsByStudentCountMenu();
-        Long studentCount = getLongInput(scanner, menu);
+        Long studentCount = getLongInput(menu);
         Map<String, Long> groups = new HashMap<>();
 
         if (studentCount > 0) {
@@ -102,32 +100,32 @@ public class UIService {
                     groups.put(group.toString(), 0l));
         }
         if (groups == null || groups.isEmpty()) {
-            UIProvider.display(NO_RECORDS);
+            UIProvider.display(Text.NO_RECORDS);
             return;
         }
         menu = menuProvider.getGroupsByStudentCountSubMenu(groups, studentCount);
         UIProvider.display(menu);
-        UIProvider.display(ANY_KEY);
+        UIProvider.display(Text.ANY_KEY);
         scanner.next();
     }
 
-    private void findAllStudentsByCourseName(Scanner scanner) {
+    private void findAllStudentsByCourseName() {
         String menu = menuProvider.getStudentsByCourseNameMenu();
         UIProvider.display(menu);
         String courseName = scanner.next();
 
         List<String> students = jdbcSchool.toListOfString(jdbcSchool.findAllStudentsByCourseName(courseName));
         if (students == null || students.isEmpty()) {
-            UIProvider.display(NO_RECORDS);
+            UIProvider.display(Text.NO_RECORDS);
             return;
         }
         menu = menuProvider.getStudentsByCourseNameSubMenu(students, courseName);
         UIProvider.display(menu);
-        UIProvider.display(ANY_KEY);
+        UIProvider.display(Text.ANY_KEY);
         scanner.next();
     }
 
-    private void addNewStudent(Scanner scanner) {
+    private void addNewStudent() {
         String menu = menuProvider.getAddNewStudentMenu();
         String name = "";
         String lastName = "";
@@ -137,8 +135,8 @@ public class UIService {
             name = scanner.next();
             lastName = scanner.next();
 
-            if (!((validateName(name, NAME_PATTERN) && validateName(lastName, NAME_PATTERN)))) {
-                UIProvider.display(NAME_INVALID);
+            if (!((validateName(name, Text.NAME_PATTERN) && validateName(lastName, Text.NAME_PATTERN)))) {
+                UIProvider.display(Text.NAME_INVALID);
                 continue;
             }
             break;
@@ -146,13 +144,13 @@ public class UIService {
         String student = jdbcSchool.addNewStudent(name, lastName);
         menu = menuProvider.getAddNewStudentSubMenu(student);
         UIProvider.display(menu);
-        UIProvider.display(ANY_KEY);
+        UIProvider.display(Text.ANY_KEY);
         scanner.next();
     }
 
-    private void deleteStudentById(Scanner scanner) {
+    private void deleteStudentById() {
         String menu = menuProvider.getDeleteStudentByIdMenu();
-        Long id = getLongInput(scanner, menu);
+        Long id = getLongInput(menu);
 
         try {
             jdbcSchool.deleteStudentById(id);
@@ -164,13 +162,13 @@ public class UIService {
         UIProvider.display(menu);
     }
 
-    private void removeStudentFromCourse(Scanner scanner) {
+    private void removeStudentFromCourse() {
         String menu = menuProvider.getRemoveStudentFromCourseMenu();
-        Long studentId = getLongInput(scanner, menu);
+        Long studentId = getLongInput(menu);
         List<String> courses = jdbcSchool.toListOfString(jdbcSchool.getAllCoursesByStudentId(studentId));
 
         if (courses == null || courses.isEmpty()) {
-            UIProvider.display("No available courses found.");
+            UIProvider.display(Text.NO_COURSES);
             return;
         }
         menu = menuProvider.getRemoveStudentFromCourseSubMenu(courses);
@@ -188,12 +186,12 @@ public class UIService {
             UIProvider.display(ex.getMessage());
             return;
         }
-        UIProvider.display("The course has been deleted");
-        UIProvider.display(ANY_KEY);
+        UIProvider.display(Text.COURSE_DELETED);
+        UIProvider.display(Text.ANY_KEY);
         scanner.next();
     }
 
-    private Long getLongInput(Scanner scanner, String menu) {
+    private Long getLongInput(String menu) {
         String rawInput = "";
         Long longInput = Long.MIN_VALUE;
 
@@ -203,12 +201,17 @@ public class UIService {
             try {
                 longInput = Long.valueOf(rawInput);
             } catch (Exception ex) {
-                UIProvider.display(INVALID_INPUT + LONG);
+                UIProvider.display(Text.INVALID_INPUT + Text.LONG);
                 continue;
             }
             break;
         }
         return longInput;
+    }
+
+    private void exit() {
+        UIProvider.display(Text.BYE);
+        scanner.close();
     }
 
     private boolean validateName(String name, String pattern) {

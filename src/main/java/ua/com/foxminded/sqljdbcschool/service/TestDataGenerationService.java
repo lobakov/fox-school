@@ -28,9 +28,8 @@ public class TestDataGenerationService {
     private Set<Student> students;
     private List<Course> courses;
 
-    public TestDataGenerationService(Supplier<Group> groupSupplier,
-                                     Supplier<Student> studentSupplier,
-                                     CourseCreator courseCreator) {
+    public TestDataGenerationService(Supplier<Group> groupSupplier, Supplier<Student> studentSupplier,
+                CourseCreator courseCreator) {
         this.groupSupplier = groupSupplier;
         this.studentSupplier = studentSupplier;
         this.courseCreator = courseCreator;
