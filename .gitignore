@@ -6,3 +6,4 @@ target/
 .checkstyle
 *.iml
 src/main/resources/credentials
+tip.txt
