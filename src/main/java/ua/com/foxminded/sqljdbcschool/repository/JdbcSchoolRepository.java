@@ -42,5 +42,5 @@ public abstract class JdbcSchoolRepository<T> {
         return exist;
     }
 
-    public abstract void save(T entity);
+    public abstract T save(T entity);
 }

@@ -65,7 +65,7 @@ public class CourseRepository extends JdbcSchoolRepository<Course> {
     }
 
     @Override
-    public void save(Course course) {
+    public Course save(Course course) {
         String sqlStatement = "INSERT INTO courses (name, description) VALUES (?, ?)";
         try (Connection connection = connectionService.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sqlStatement,
@@ -83,5 +83,6 @@ public class CourseRepository extends JdbcSchoolRepository<Course> {
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
+        return course;
     }
 }

@@ -16,7 +16,7 @@ public class ConfigurationService {
     public ConfigurationService(FileReader reader) {
         this.reader = reader;
         this.config = new ConnectionConfig(reader);
-        this.connectionService = new ConnectionService(config);
+        this.connectionService = new ConnectionServiceImpl(config);
         initDb();
     }
 

@@ -21,6 +21,20 @@ public class TablesPopulationService {
     private StudentRepository studentRepository;
     private CourseRepository courseRepository;
 
+    public TablesPopulationService(Set<Group> groups, Set<Student> students, List<Course> courses) {
+        this.groups = groups;
+        this.students = students;
+        this.courses = courses;
+    }
+
+    public void populateTables() throws InterruptedException {
+        populate(groups, groupRepository.saveEntity);
+        populate(courses.stream().collect(Collectors.toSet()), courseRepository.saveEntity);
+        populate(students, studentRepository.saveEntity);
+        assignStudentsToGroups();
+        assignCoursesToStudents();
+    }
+
     public TablesPopulationService setGroupRepository(GroupRepository groupRepository) {
         this.groupRepository = groupRepository;
         return this;
@@ -34,20 +48,6 @@ public class TablesPopulationService {
     public TablesPopulationService setCourseRepository(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
         return this;
-    }
-
-    public TablesPopulationService(Set<Group> groups, Set<Student> students, List<Course> courses) {
-        this.groups = groups;
-        this.students = students;
-        this.courses = courses;
-    }
-
-    public void populateTables() throws InterruptedException {
-        populate(groups, groupRepository.saveEntity);
-        populate(courses.stream().collect(Collectors.toSet()), courseRepository.saveEntity);
-        populate(students, studentRepository.saveEntity);
-        assignStudentsToGroups();
-        assignCoursesToStudents();
     }
 
     private void assignStudentsToGroups() throws InterruptedException {

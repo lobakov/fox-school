@@ -11,16 +11,13 @@ import ua.com.foxminded.sqljdbcschool.utility.FileReader;
 import ua.com.foxminded.sqljdbcschool.view.MenuProvider;
 
 public class SqlJdbcSchoolApplication {
-    //TODO: 1. Change project name 2. Fat Jar
+    //TODO: Fat Jar
 
     public static void main(String[] args) throws InterruptedException {
         ConfigurationService configurationService = new ConfigurationService(new FileReader());
-
         ConnectionService connectionService = configurationService.getConnectionService();
-
         SqlJdbcSchoolService schoolService = new SqlJdbcSchoolService(new CourseRepository(connectionService),
                                 new GroupRepository(connectionService), new StudentRepository(connectionService));
-
         UIService uiService = new UIService(schoolService, new MenuProvider());
         uiService.run();
     }
