@@ -8,9 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import ua.com.foxminded.sqljdbcschool.entity.Course;
 import ua.com.foxminded.sqljdbcschool.entity.Group;
-import ua.com.foxminded.sqljdbcschool.entity.Student;
 import ua.com.foxminded.sqljdbcschool.service.ConnectionService;
 
 public class GroupRepository extends JdbcSchoolRepository<Group> {
@@ -98,7 +96,7 @@ public class GroupRepository extends JdbcSchoolRepository<Group> {
     }
 
     @Override
-    public void save(Group group) {
+    public Group save(Group group) {
         String sqlStatement = "INSERT INTO groups (name) VALUES (?)";
         try (Connection connection = connectionService.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sqlStatement,
@@ -115,5 +113,6 @@ public class GroupRepository extends JdbcSchoolRepository<Group> {
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
+        return group;
     }
 }
