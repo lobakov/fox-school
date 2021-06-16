@@ -102,7 +102,7 @@ public class SqlJdbcSchoolService {
     @SuppressWarnings("rawtypes")
     private void checkIfExist(JdbcSchoolRepository repository, Long id) {
         if (!repository.idExists(id)) {
-            throw new RecordNotFoundException("Course id " + id + "not found!");
+            throw new RecordNotFoundException("Id " + id + "not found!");
         }
     }
 }
