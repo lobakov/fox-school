@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import ua.com.foxminded.sqljdbcschool.cache.EntityCache;
 import ua.com.foxminded.sqljdbcschool.entity.Course;
 import ua.com.foxminded.sqljdbcschool.entity.Group;
 import ua.com.foxminded.sqljdbcschool.entity.Student;
 import ua.com.foxminded.sqljdbcschool.exception.RecordNotFoundException;
 import ua.com.foxminded.sqljdbcschool.repository.CourseRepository;
 import ua.com.foxminded.sqljdbcschool.repository.GroupRepository;
+import ua.com.foxminded.sqljdbcschool.repository.JdbcSchoolRepository;
 import ua.com.foxminded.sqljdbcschool.repository.StudentRepository;
 
 public class SqlJdbcSchoolService {
@@ -17,6 +19,10 @@ public class SqlJdbcSchoolService {
     private CourseRepository courseRepository;
     private GroupRepository groupRepository;
     private StudentRepository studentRepository;
+
+    private EntityCache<Course> courseCache = new EntityCache<>();
+    private EntityCache<Student> studentCache = new EntityCache<>();
+    private EntityCache<Group> groupCache = new EntityCache<>();
 
     public SqlJdbcSchoolService(CourseRepository courseRepository,
                                 GroupRepository groupRepository,
@@ -32,18 +38,18 @@ public class SqlJdbcSchoolService {
     }
 
     public List<Course> getAllCoursesByStudentId(Long id) {
-        checkIfStudentExist(id);
+        checkIfExist(studentRepository, id);
         return courseRepository.findAllCoursesByStudentId(id);
     }
 
     public Long getStudentCountByGroupId(Long id) {
-        checkIfGroupExist(id);
+        checkIfExist(groupRepository, id);
         return groupRepository.getStudentCountByGroupId(id);
     }
 
     public void addStudentToCourse(Long studentId, Long courseId) {
-        checkIfStudentExist(studentId);
-        checkIfCourseExist(courseId);
+        checkIfExist(studentRepository, studentId);
+        checkIfExist(courseRepository, courseId);
         studentRepository.assignCourseToStudent(studentId, courseId);
     }
 
@@ -58,16 +64,18 @@ public class SqlJdbcSchoolService {
     public String addNewStudent(String firstName, String lastName) {
         Student student = new Student(firstName, lastName);
         studentRepository.save(student);
+        studentCache.put(student.getId(), student);
         return student.toString();
     }
 
     public void deleteStudentById(Long id) {
-        checkIfStudentExist(id);
+        checkIfExist(studentRepository, id);
         studentRepository.deleteStudentById(id);
+        studentCache.remove(id);
     }
 
     public void removeStudentFromCourse(Long studentId, List<Long> courseIds) {
-        checkIfStudentExist(studentId);
+        checkIfExist(studentRepository, studentId);
         studentRepository.removeStudentFromCourses(studentId, courseIds);
     }
 
@@ -91,21 +99,10 @@ public class SqlJdbcSchoolService {
         return result;
     }
 
-    private void checkIfStudentExist(Long id) {
-        if (!studentRepository.idExists(id)) {
-            throw new RecordNotFoundException("Student id " + id + "not found!");
-        }
-    }
-
-    private void checkIfCourseExist(Long id) {
-        if (!courseRepository.idExists(id)) {
-            throw new RecordNotFoundException("Course id " + id + "not found!");
-        }
-    }
-
-    private void checkIfGroupExist(Long id) {
-        if (!courseRepository.idExists(id)) {
-            throw new RecordNotFoundException("Group id " + id + "not found!");
+    @SuppressWarnings("rawtypes")
+    private void checkIfExist(JdbcSchoolRepository repository, Long id) {
+        if (!repository.idExists(id)) {
+            throw new RecordNotFoundException("Id " + id + "not found!");
         }
     }
 }
